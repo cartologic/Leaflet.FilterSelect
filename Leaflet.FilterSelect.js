@@ -6,8 +6,9 @@ L.FilterSelect = L.Control.extend({
         include: [],
     },
     onAdd: function (map) {
-        this.div = L.DomUtil.create('div', 'leaflet-filterselect-container');
+        this.div = L.DomUtil.create('div');
         this.select = L.DomUtil.create('select', 'leaflet-filterselect leaflet-bar', this.div);
+        // this.select.size = 8;
         this.select.parentControl = this;
         this.map = map;
         let content = '';
@@ -31,6 +32,19 @@ L.FilterSelect = L.Control.extend({
 
         return this.div;
     },
+
+    addTo: function (map) {
+        if(this.options.container) {
+            this.div = this.onAdd(map);
+            this._wrapper = L.DomUtil.get(this.options.container);
+            this._wrapper.style.position = 'relative';
+            this._wrapper.appendChild(this.div);
+        }
+        else
+            L.Control.prototype.addTo.call(this, map);
+        return this;
+    },
+
     _onChange: function (e) {
     	const selectedItem = this.options[this.selectedIndex].value;
         e.feature = this.parentControl.options.features[selectedItem];
