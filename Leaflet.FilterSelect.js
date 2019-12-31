@@ -49,13 +49,19 @@ L.FilterSelect = L.Control.extend({
     	const selectedItem = this.options[this.selectedIndex].value;
         e.feature = this.parentControl.options.features[selectedItem];
         if (e.feature === undefined) { //No action when the first item  is selected
-        	this.parentControl.options.targetLayer.setWhere(''); // clear filters
-			if (this.previousFeature != null)
-            	this.parentControl.map.removeLayer(this.previousFeature);
+            // This is a hack and should be replaced by a solid solution
+            this.parentControl.map.setView(config.start.center, config.start.zoom);
+            setTimeout(() => {
+                let condition = window.opportunitiesMapConfig.filterQuery;
+                this.parentControl.options.targetLayer.setWhere(condition); // clear filters
+            }, 500);
+
+			if (this.previousFeature !== null)
+                this.parentControl.map.removeLayer(this.previousFeature);
             return;
         }
         let condition = "" + this.parentControl.options.targetFilterField + "='";
-        condition += e.feature.properties[this.parentControl.options.sourceFilterField] + "'"
+        condition += e.feature.properties[this.parentControl.options.sourceFilterField] + "'";
         this.parentControl.options.targetLayer.setWhere(condition);
         const feature = L.geoJson(e.feature);
         if (this.previousFeature != null) {
