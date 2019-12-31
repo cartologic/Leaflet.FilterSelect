@@ -52,7 +52,9 @@ L.FilterSelect = L.Control.extend({
             // This is a hack and should be replaced by a solid solution
             this.parentControl.map.setView(config.start.center, config.start.zoom);
             setTimeout(() => {
-                let condition = window.opportunitiesMapConfig.filterQuery;
+                window.opportunitiesMapConfig.amanaFilter = '1=1';
+                let condition = window.opportunitiesMapConfig.activityTypeFilter +
+                    " AND " + window.opportunitiesMapConfig.amanaFilter;
                 this.parentControl.options.targetLayer.setWhere(condition); // clear filters
             }, 500);
 
@@ -60,8 +62,10 @@ L.FilterSelect = L.Control.extend({
                 this.parentControl.map.removeLayer(this.previousFeature);
             return;
         }
-        let condition = "" + this.parentControl.options.targetFilterField + "='";
-        condition += e.feature.properties[this.parentControl.options.sourceFilterField] + "'";
+        window.opportunitiesMapConfig.amanaFilter = this.parentControl.options.targetFilterField + "='" +
+            e.feature.properties[this.parentControl.options.sourceFilterField] + "'";
+        let condition = window.opportunitiesMapConfig.activityTypeFilter +
+            " AND " + window.opportunitiesMapConfig.amanaFilter;
         this.parentControl.options.targetLayer.setWhere(condition);
         const feature = L.geoJson(e.feature);
         if (this.previousFeature != null) {
